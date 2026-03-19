@@ -5,7 +5,7 @@ services:
     build: ./SIGN-LINGO-AUTH
     container_name: test-auth
     environment:
-      - MONGO_URI=mongodb+srv://mock
+      - MONGO_URI=mongodb://localhost:27017
       - JWT_SECRET_KEY=your_secret_key_here_change_this_in_production
     command: uvicorn main:app --host 0.0.0.0 --port 5002
     ports:
@@ -17,7 +17,7 @@ services:
     build: ./SIGN-LINGO-CONTENT
     container_name: test-content
     environment:
-      - MONGO_URI=mongodb+srv://mock
+      - MONGO_URI=mongodb://localhost:27017
       - JWT_SECRET_KEY=your_secret_key_here_change_this_in_production
     command: uvicorn main:app --host 0.0.0.0 --port 5003
     ports:
@@ -29,7 +29,7 @@ services:
     build: ./SIGN-LINGO-PRACTICE
     container_name: test-practice
     environment:
-      - MONGO_URI=mongodb+srv://mock
+      - MONGO_URI=mongodb://localhost:27017
       - JWT_SECRET_KEY=your_secret_key_here_change_this_in_production
     command: uvicorn main:app --host 0.0.0.0 --port 5004
     ports:
