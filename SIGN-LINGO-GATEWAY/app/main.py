@@ -68,9 +68,9 @@ async def proxy(request: Request, path: str):
     if request.url.query:
         target_url += f"?{request.url.query}"
 
-    # Forward headers (strip hop-by-hop)
+    # Forward headers (strip hop-by-hop & compression specs)
     forward_headers = dict(request.headers)
-    for hop_header in ("host", "connection", "transfer-encoding"):
+    for hop_header in ("host", "connection", "transfer-encoding", "accept-encoding"):
         forward_headers.pop(hop_header, None)
 
     # Read body
