@@ -14,10 +14,10 @@ jobs:
     
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
           
@@ -29,14 +29,14 @@ jobs:
           
       - name: Start Docker Orchestration
         run: |
-          docker-compose -f docker-compose.test.yml up -d --build
+          docker compose -f docker-compose.test.yml up -d --build
           sleep 15 # Wait for uvicorn workers to boot up
 
       - name: Run Integration Tests
         run: |
           cd SIGN-LINGO-TESTS
-          pytest -v
+          python -m pytest -v
 
       - name: Shutdown Services
         if: always()
-        run: docker-compose -f docker-compose.test.yml down
+        run: docker compose -f docker-compose.test.yml down
