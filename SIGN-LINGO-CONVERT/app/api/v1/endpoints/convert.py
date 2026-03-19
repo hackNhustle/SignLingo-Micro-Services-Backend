@@ -10,6 +10,10 @@ from app.schemas.convert import (
 
 router = APIRouter()
 
+@router.get("/health")
+async def health_check() -> Any:
+    return {"status": "ok", "service": "convert-service"}
+
 @router.post("/text-to-sign", response_model=TextToSignResponse)
 async def text_to_sign(request: TextToSignRequest) -> Any:
     """

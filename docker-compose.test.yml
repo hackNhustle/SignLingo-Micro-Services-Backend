@@ -10,6 +10,9 @@ services:
     command: uvicorn main:app --host 0.0.0.0 --port 5002
     ports:
       - "5002:5002"
+    depends_on:
+      mongo:
+        condition: service_healthy
     networks:
       - test-mesh
 
@@ -22,6 +25,9 @@ services:
     command: uvicorn main:app --host 0.0.0.0 --port 5003
     ports:
       - "5003:5003"
+    depends_on:
+      mongo:
+        condition: service_healthy
     networks:
       - test-mesh
 
@@ -34,6 +40,9 @@ services:
     command: uvicorn main:app --host 0.0.0.0 --port 5004
     ports:
       - "5004:5004"
+    depends_on:
+      mongo:
+        condition: service_healthy
     networks:
       - test-mesh
 
@@ -71,6 +80,11 @@ services:
     container_name: test-mongo
     ports:
       - "27017:27017"
+    healthcheck:
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     networks:
       - test-mesh
 
