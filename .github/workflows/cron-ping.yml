@@ -1,0 +1,28 @@
+name: Keep Render Services Awake
+
+on:
+  schedule:
+    - cron: '*/10 * * * *' # Runs every 10 minutes to prevent 15-min Render spin-down
+  workflow_dispatch: # Allows manual trigger from the GitHub Actions tab
+
+jobs:
+  health-ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping API Gateway
+        run: curl -s --retry 3 https://signlingo-micro-services-backend-3.onrender.com/health || true
+        
+      - name: Ping Auth Service
+        run: curl -s --retry 3 https://signlingo-micro-services-backend.onrender.com/health || true
+        
+      - name: Ping Content Service
+        run: curl -s --retry 3 https://signlingo-micro-services-backend-1.onrender.com/health || true
+        
+      - name: Ping Practice Service
+        run: curl -s --retry 3 https://signlingo-micro-services-backend-2.onrender.com/health || true
+
+      - name: Ping Convert Service
+        run: curl -s --retry 3 https://signlingo-micro-services-backend-4.onrender.com/health || true
+
+      - name: Ping ASL/ISL Model Endpoint
+        run: curl -s --retry 3 https://isl-alphabet-detection.onrender.com/ || true
