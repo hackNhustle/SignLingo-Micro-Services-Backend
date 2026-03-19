@@ -10,18 +10,20 @@ load_dotenv()
 
 # Configure Cloudinary
 cloud_name = os.getenv('CLOUDINARY_CLOUD_NAME', '788746597461992')
-api_key = os.getenv('CLOUDINARY_API_KEY', '788746597461992')
-api_secret = os.getenv('CLOUDINARY_API_SECRET', '5JNheSh-W_dytkxmeBRICisTSNE')
+cloud_name = os.getenv('CLOUDINARY_CLOUD_NAME', 'your_cloud_name') # Placeholder default
+api_key = os.getenv('CLOUDINARY_API_KEY', 'your_api_key') # Placeholder default
+api_secret = os.getenv('CLOUDINARY_API_SECRET', 'your_api_secret') # Placeholder default
 
 print(f"🔧 Cloudinary Configuration:")
 print(f"   Cloud Name: {cloud_name}")
 print(f"   API Key: {api_key[:10]}...")
 print(f"   API Secret: {api_secret[:10]}...")
 
+# Use environment variables or place holders instead of hardcoding
 cloudinary.config(
-    cloud_name=cloud_name,
-    api_key=api_key,
-    api_secret=api_secret
+  cloud_name = cloud_name,
+  api_key = api_key,
+  api_secret = api_secret
 )
 
 try:

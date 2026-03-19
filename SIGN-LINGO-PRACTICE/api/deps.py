@@ -3,6 +3,8 @@ from db.database import get_db
 from schemas.user import UserResponse
 from bson import ObjectId
 
+from core.config import settings
+
 import jwt
 
 async def get_current_user(

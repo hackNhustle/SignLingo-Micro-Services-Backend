@@ -1,3 +1,4 @@
+from core.config import settings
 from fastapi import Depends, HTTPException, status, Request
 from db.database import get_db
 from schemas.user import UserResponse

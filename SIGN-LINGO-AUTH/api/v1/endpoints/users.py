@@ -154,7 +154,7 @@ async def get_all_users(
     skip: int = 0,
     limit: int = 100,
     db: AsyncIOMotorClient = Depends(deps.get_db),
-    current_user: UserResponse = Depends(deps.get_current_active_user)
+    current_user: UserResponse = Depends(deps.get_current_user)
 ) -> Any:
     """
     Retrieve all users (Admin only).
