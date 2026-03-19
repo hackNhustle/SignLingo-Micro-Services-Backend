@@ -6,6 +6,7 @@ services:
     container_name: test-auth
     environment:
       - MONGO_URI=mongodb://mongo:27017
+      - MONGO_TLS=False
       - JWT_SECRET_KEY=your_secret_key_here_change_this_in_production
     command: uvicorn main:app --host 0.0.0.0 --port 5002
     ports:
@@ -21,6 +22,7 @@ services:
     container_name: test-content
     environment:
       - MONGO_URI=mongodb://mongo:27017
+      - MONGO_TLS=False
       - JWT_SECRET_KEY=your_secret_key_here_change_this_in_production
     command: uvicorn main:app --host 0.0.0.0 --port 5003
     ports:
@@ -36,6 +38,7 @@ services:
     container_name: test-practice
     environment:
       - MONGO_URI=mongodb://mongo:27017
+      - MONGO_TLS=False
       - JWT_SECRET_KEY=your_secret_key_here_change_this_in_production
     command: uvicorn main:app --host 0.0.0.0 --port 5004
     ports:

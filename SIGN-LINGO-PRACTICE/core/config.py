@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     # MongoDB
     MONGO_URI: str = "mongodb://localhost:27017/"
     DB_NAME: str = "thadomal_db"
+    MONGO_TLS: bool = True
     
     # Security
     JWT_SECRET_KEY: str = "fallback_secret_key"

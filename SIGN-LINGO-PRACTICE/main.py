@@ -20,8 +20,8 @@ async def lifespan(app: FastAPI):
     print(f"Connecting to MongoDB Atlas: {masked_uri}")
     mongo.client = AsyncIOMotorClient(
         settings.MONGO_URI,
-        tls=True,
-        tlsCAFile=certifi.where()
+        tls=settings.MONGO_TLS,
+        tlsCAFile=certifi.where() if settings.MONGO_TLS else None
     )
     try:
         await asyncio.wait_for(mongo.client.admin.command('ping'), timeout=5.0)
