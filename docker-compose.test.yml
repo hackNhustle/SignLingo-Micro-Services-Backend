@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  auth-service:
+    build: ./SIGN-LINGO-AUTH
+    container_name: test-auth
+    environment:
+      - MONGO_URI=mongodb+srv://mock
+      - JWT_SECRET_KEY=your_secret_key_here_change_this_in_production
+    command: uvicorn main:app --host 0.0.0.0 --port 5002
+    ports:
+      - "5002:5002"
+    networks:
+      - test-mesh
+
+  content-service:
+    build: ./SIGN-LINGO-CONTENT
+    container_name: test-content
+    environment:
+      - MONGO_URI=mongodb+srv://mock
+      - JWT_SECRET_KEY=your_secret_key_here_change_this_in_production
+    command: uvicorn main:app --host 0.0.0.0 --port 5003
+    ports:
+      - "5003:5003"
+    networks:
+      - test-mesh
+
+  practice-service:
+    build: ./SIGN-LINGO-PRACTICE
+    container_name: test-practice
+    environment:
+      - MONGO_URI=mongodb+srv://mock
+      - JWT_SECRET_KEY=your_secret_key_here_change_this_in_production
+    command: uvicorn main:app --host 0.0.0.0 --port 5004
+    ports:
+      - "5004:5004"
+    networks:
+      - test-mesh
+
+  gateway:
+    build: ./SIGN-LINGO-GATEWAY
+    container_name: test-gateway
+    environment:
+      - AUTH_SERVICE_URL=http://auth-service:5002
+      - CONTENT_SERVICE_URL=http://content-service:5003
+      - PRACTICE_SERVICE_URL=http://practice-service:5004
+      - JWT_SECRET_KEY=your_secret_key_here_change_this_in_production
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      - auth-service
+      - content-service
+      - practice-service
+    networks:
+      - test-mesh
+
+networks:
+  test-mesh:

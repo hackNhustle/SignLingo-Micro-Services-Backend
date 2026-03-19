@@ -1,0 +1,42 @@
+name: CI/CD Backend Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          
+      - name: Install Test Dependencies
+        run: |
+          cd SIGN-LINGO-TESTS
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          
+      - name: Start Docker Orchestration
+        run: |
+          docker-compose -f docker-compose.test.yml up -d --build
+          sleep 15 # Wait for uvicorn workers to boot up
+
+      - name: Run Integration Tests
+        run: |
+          cd SIGN-LINGO-TESTS
+          pytest -v
+
+      - name: Shutdown Services
+        if: always()
+        run: docker-compose -f docker-compose.test.yml down
