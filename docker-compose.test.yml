@@ -37,6 +37,15 @@ services:
     networks:
       - test-mesh
 
+  convert-service:
+    build: ./SIGN-LINGO-CONVERT
+    container_name: test-convert
+    command: uvicorn app.main:app --host 0.0.0.0 --port 5005
+    ports:
+      - "5005:5005"
+    networks:
+      - test-mesh
+
   gateway:
     build: ./SIGN-LINGO-GATEWAY
     container_name: test-gateway
@@ -44,6 +53,7 @@ services:
       - AUTH_SERVICE_URL=http://auth-service:5002
       - CONTENT_SERVICE_URL=http://content-service:5003
       - PRACTICE_SERVICE_URL=http://practice-service:5004
+      - CONVERT_SERVICE_URL=http://convert-service:5005
       - JWT_SECRET_KEY=your_secret_key_here_change_this_in_production
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000
     ports:
@@ -52,6 +62,7 @@ services:
       - auth-service
       - content-service
       - practice-service
+      - convert-service
     networks:
       - test-mesh
 
