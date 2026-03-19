@@ -24,5 +24,8 @@ jobs:
       - name: Ping Convert Service
         run: curl -s --retry 3 https://signlingo-micro-services-backend-4.onrender.com/health || true
 
-      - name: Ping ASL/ISL Model Endpoint
+      - name: Ping ISL Model Endpoint
         run: curl -s --retry 3 https://isl-alphabet-detection.onrender.com/ || true
+
+      - name: Ping ASL Model Endpoint
+        run: curl -s --retry 3 https://asl-alphabet-detection.onrender.com/ || true
