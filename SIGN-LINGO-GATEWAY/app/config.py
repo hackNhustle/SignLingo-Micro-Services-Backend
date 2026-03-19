@@ -1,0 +1,41 @@
+import os
+from pydantic_settings import BaseSettings
+
+class Settings(BaseSettings):
+    # JWT
+    JWT_SECRET_KEY: str = "your_secret_key_here_change_this_in_production"
+    JWT_ALGORITHM: str = "HS256"
+
+    # Upstream service URLs (override via env vars for Render deployment)
+    AUTH_SERVICE_URL: str = os.getenv("AUTH_SERVICE_URL", "http://auth-service:5002")
+    CONTENT_SERVICE_URL: str = os.getenv("CONTENT_SERVICE_URL", "http://content-service:5003")
+    PRACTICE_SERVICE_URL: str = os.getenv("PRACTICE_SERVICE_URL", "http://practice-service:5004")
+    CONVERT_SERVICE_URL: str = os.getenv("CONVERT_SERVICE_URL", "http://convert-service:5005")
+
+    class Config:
+        env_file = ".env"
+        case_sensitive = True
+
+settings = Settings()
+
+# Route table: prefix → (upstream_url, requires_jwt)
+ROUTE_TABLE = [
+    # Auth service (no JWT required for login/register)
+    ("/api/v1/auth",      settings.AUTH_SERVICE_URL,      False),
+    ("/api/v1/user",       settings.AUTH_SERVICE_URL,      True),
+
+    # Content service (JWT required)
+    ("/api/v1/videos",     settings.CONTENT_SERVICE_URL,   True),
+    ("/api/v1/learning",   settings.CONTENT_SERVICE_URL,   True),
+    ("/api/v1/alphabet",   settings.CONTENT_SERVICE_URL,   True),
+    ("/api/v1/glyphs",     settings.CONTENT_SERVICE_URL,   True),
+    ("/api/v1/vocabulary", settings.CONTENT_SERVICE_URL,   True),
+    ("/asl",               settings.CONTENT_SERVICE_URL,   True),
+
+    # Practice service (JWT required)
+    ("/api/v1/practice",   settings.PRACTICE_SERVICE_URL,  True),
+    ("/api/v1/progress",   settings.PRACTICE_SERVICE_URL,  True),
+
+    # Convert service (no JWT required — public tools)
+    ("/api/v1/convert",    settings.CONVERT_SERVICE_URL,   False),
+]

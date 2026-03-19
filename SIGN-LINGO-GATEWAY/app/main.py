@@ -1,0 +1,110 @@
+
+import jwt
+import httpx
+from fastapi import FastAPI, Request, Response, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from app.config import settings, ROUTE_TABLE
+
+app = FastAPI(title="SignLingo API Gateway")
+
+# ── CORS ─────────────────────────────────────────────────────────────
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# ── Shared async HTTP client ─────────────────────────────────────────
+client = httpx.AsyncClient(timeout=30.0)
+
+
+# ── Helpers ──────────────────────────────────────────────────────────
+def resolve_upstream(path: str):
+    """Match the request path to an upstream service using the route table."""
+    for prefix, upstream_url, requires_jwt in ROUTE_TABLE:
+        if path.startswith(prefix):
+            return upstream_url, requires_jwt
+    return None, False
+
+
+def validate_jwt(request: Request):
+    """Validate the JWT Bearer token. Raises HTTPException on failure."""
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Missing or invalid Authorization header")
+    token = auth_header.split(" ", 1)[1]
+    try:
+        jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token has expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+
+# ── Health check ─────────────────────────────────────────────────────
+@app.get("/health")
+async def health():
+    return {"status": "ok", "service": "api-gateway"}
+
+
+# ── Catch-all reverse proxy ─────────────────────────────────────────
+@app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"])
+async def proxy(request: Request, path: str):
+    full_path = f"/{path}"
+
+    # Resolve upstream
+    upstream_url, requires_jwt = resolve_upstream(full_path)
+    if not upstream_url:
+        raise HTTPException(status_code=404, detail=f"No route matched: {full_path}")
+
+    # JWT gate
+    if requires_jwt:
+        validate_jwt(request)
+
+    # Build upstream URL
+    target_url = f"{upstream_url}{full_path}"
+    if request.url.query:
+        target_url += f"?{request.url.query}"
+
+    # Forward headers (strip hop-by-hop)
+    forward_headers = dict(request.headers)
+    for hop_header in ("host", "connection", "transfer-encoding"):
+        forward_headers.pop(hop_header, None)
+
+    # Read body
+    body = await request.body()
+
+    # Proxy the request
+    try:
+        upstream_response = await client.request(
+            method=request.method,
+            url=target_url,
+            headers=forward_headers,
+            content=body,
+        )
+    except httpx.ConnectError:
+        raise HTTPException(status_code=502, detail=f"Upstream service unreachable")
+    except httpx.TimeoutException:
+        raise HTTPException(status_code=504, detail=f"Upstream service timed out")
+
+    # Forward response back
+    excluded_headers = {"content-encoding", "content-length", "transfer-encoding", "connection"}
+    response_headers = {
+        k: v for k, v in upstream_response.headers.items()
+        if k.lower() not in excluded_headers
+    }
+
+    return Response(
+        content=upstream_response.content,
+        status_code=upstream_response.status_code,
+        headers=response_headers,
+        media_type=upstream_response.headers.get("content-type"),
+    )
+
+
+# ── Shutdown ─────────────────────────────────────────────────────────
+@app.on_event("shutdown")
+async def shutdown():
+    await client.aclose()

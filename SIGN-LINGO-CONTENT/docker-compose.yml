@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  content-service:
+    build: .
+    container_name: content-service
+    env_file: .env
+    command: uvicorn main:app --host 0.0.0.0 --port 5003
+    ports:
+      - "5003:5003"
+    networks:
+      - signlingo-mesh
+
+networks:
+  signlingo-mesh:
+    external: true

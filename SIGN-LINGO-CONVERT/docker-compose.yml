@@ -1,0 +1,12 @@
+services:
+  convert-service:
+    build: .
+    container_name: signlingo-convert
+    ports:
+      - "5005:5005"
+    networks:
+      - signlingo-mesh
+
+networks:
+  signlingo-mesh:
+    external: true
