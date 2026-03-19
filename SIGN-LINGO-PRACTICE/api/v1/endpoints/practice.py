@@ -21,9 +21,9 @@ async def submit_practice(
     
     target_char = practice_in.letter or practice_in.character
     
-    # TODO: Implement actual stroke validation or accept score from frontend payload.
-    # We are returning a fixed placeholder score of 85 to avoid fake metrics.
-    score = 85
+    # The frontend renders the strokes and verifies accuracy against the template
+    # We accept the computed score directly from the client payload
+    score = practice_in.score if practice_in.score is not None else 0
     
     session_dict = {
         "user_id": current_user.id,
@@ -95,8 +95,8 @@ async def writing_practice(
     if not target_char:
          raise HTTPException(status_code=400, detail="Character required")
          
-    # TODO: Implement actual stroke validation or accept score from frontend payload.
-    score = 85
+    # Accept frontend-computed accuracy score from payload
+    score = practice_in.score if practice_in.score is not None else 0
     
     session_data = {
         "user_id": current_user.id,

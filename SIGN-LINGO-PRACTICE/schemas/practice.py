@@ -10,6 +10,7 @@ class PracticeSubmit(BaseModel):
     language: str = "ISL"
     session_id: Optional[str] = None
     practice_type: str = "tracing"
+    score: Optional[float] = None
 
 class PracticeSession(MongoBaseModel):
     id: Optional[PyObjectId] = Field(alias="_id", default=None)
