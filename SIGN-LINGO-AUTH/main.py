@@ -59,7 +59,6 @@ cloudinary.config(
     api_secret=settings.CLOUDINARY_API_SECRET
 )
 
-import certifi
 
 ## Startup/Shutdown events replaced by lifespan handler above
 

@@ -9,9 +9,9 @@ import cloudinary.uploader
 load_dotenv()
 
 # Configure Cloudinary
-cloud_name = os.getenv('CLOUDINARY_CLOUD_NAME', '788746597461992')
-api_key = os.getenv('CLOUDINARY_API_KEY', '788746597461992')
-api_secret = os.getenv('CLOUDINARY_API_SECRET', '5JNheSh-W_dytkxmeBRICisTSNE')
+cloud_name = os.getenv('CLOUDINARY_CLOUD_NAME', 'your_cloud_name')
+api_key = os.getenv('CLOUDINARY_API_KEY', 'your_api_key')
+api_secret = os.getenv('CLOUDINARY_API_SECRET', 'your_api_secret')
 
 print(f"🔧 Cloudinary Configuration:")
 print(f"   Cloud Name: {cloud_name}")
