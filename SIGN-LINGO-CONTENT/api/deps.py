@@ -16,8 +16,12 @@ async def get_current_user(
         
     token = auth_header.split(" ")[1]
     try:
-        # Kong validates the JWT signature, but we must extract the actual User ID (sub) naturally
-        payload = jwt.decode(token, options={"verify_signature": False})
+        # Verify the signature enforcing the JWT secret key
+        payload = jwt.decode(
+            token, 
+            settings.JWT_SECRET_KEY, 
+            algorithms=[settings.JWT_ALGORITHM]
+        )
         user_id = payload.get("sub") or payload.get("user_id")
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid JWT Payload")

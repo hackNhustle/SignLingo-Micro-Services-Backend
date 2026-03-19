@@ -150,14 +150,18 @@ async def upload_profile_picture(
         raise HTTPException(status_code=500, detail=f"Upload failed: {str(e)}")
 
 @router.get("/all", response_model=List[UserResponse])
-async def read_users(
+async def get_all_users(
     skip: int = 0,
     limit: int = 100,
     db: AsyncIOMotorClient = Depends(deps.get_db),
+    current_user: UserResponse = Depends(deps.get_current_active_user)
 ) -> Any:
     """
-    Retrieve all users.
+    Retrieve all users (Admin only).
     """
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+        
     users_cursor = db.users.find().skip(skip).limit(limit)
     users = await users_cursor.to_list(length=limit)
     return [UserResponse(**user) for user in users]

@@ -15,9 +15,8 @@ def get_video_url(video_id: str) -> str:
 @router.get("/alphabet/list")
 async def get_alphabet_list(
     current_user: UserResponse = Depends(deps.get_current_user),
+    db: AsyncIOMotorClient = Depends(deps.get_db)
 ) -> Any:
-    from motor.motor_asyncio import AsyncIOMotorClient
-    db: AsyncIOMotorClient = await deps.get_db()
     # Fetch all unique keys from asl_mappings collection
     keys = await db.asl_mappings.distinct("key")
     alphabet_list = []
