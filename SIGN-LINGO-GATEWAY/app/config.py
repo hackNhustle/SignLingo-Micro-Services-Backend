@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     CONTENT_SERVICE_URL: str = os.getenv("CONTENT_SERVICE_URL", "http://content-service:5003")
     PRACTICE_SERVICE_URL: str = os.getenv("PRACTICE_SERVICE_URL", "http://practice-service:5004")
     CONVERT_SERVICE_URL: str = os.getenv("CONVERT_SERVICE_URL", "http://convert-service:5005")
+    ASL_SERVICE_URL: str = os.getenv("ASL_SERVICE_URL", "https://asl-alphabet-detection.onrender.com")
+    ISL_SERVICE_URL: str = os.getenv("ISL_SERVICE_URL", "https://isl-alphabet-detection.onrender.com")
 
     class Config:
         env_file = ".env"
@@ -44,4 +46,8 @@ ROUTE_TABLE = [
 
     # Convert service
     ("/api/v1/convert",    settings.CONVERT_SERVICE_URL,   False),
+
+    # ML Model Proxing
+    ("/api/v1/model/asl",  settings.ASL_SERVICE_URL,       False),
+    ("/api/v1/model/isl",  settings.ISL_SERVICE_URL,       False),
 ]
