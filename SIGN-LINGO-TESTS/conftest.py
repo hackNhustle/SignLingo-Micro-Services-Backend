@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 fake = Faker()
 
 KONG_URL = "http://localhost:8000"
+GATEWAY_URL = "http://localhost:8000" # FastAPI Gateway also runs on 8000
 AUTH_URL = "http://localhost:5002"
 CONTENT_URL = "http://localhost:5003"
 PRACTICE_URL = "http://localhost:5004"
