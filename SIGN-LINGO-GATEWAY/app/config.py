@@ -20,34 +20,34 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
-# Route table: prefix → (upstream_url, requires_jwt)
+# Route table: prefix → (upstream_url, requires_jwt, strip_prefix)
 ROUTE_TABLE = [
     # Auth service & System 
-    ("/api/v1/auth",      settings.AUTH_SERVICE_URL,      False),
-    ("/api/v1/user",       settings.AUTH_SERVICE_URL,      True),
-    ("/api/v1/health",     settings.AUTH_SERVICE_URL,      False),
-    ("/api/v1/test",       settings.AUTH_SERVICE_URL,      False),
-    ("/api/v1/feedback",   settings.AUTH_SERVICE_URL,      True),
+    ("/api/v1/auth",      settings.AUTH_SERVICE_URL,      False, False),
+    ("/api/v1/user",       settings.AUTH_SERVICE_URL,      True,  False),
+    ("/api/v1/health",     settings.AUTH_SERVICE_URL,      False, False),
+    ("/api/v1/test",       settings.AUTH_SERVICE_URL,      False, False),
+    ("/api/v1/feedback",   settings.AUTH_SERVICE_URL,      True,  False),
 
     # Content service
-    ("/api/v1/videos",     settings.CONTENT_SERVICE_URL,   True),
-    ("/api/v1/learning",   settings.CONTENT_SERVICE_URL,   True),
-    ("/api/v1/alphabet",   settings.CONTENT_SERVICE_URL,   True),
-    ("/api/v1/glyphs",     settings.CONTENT_SERVICE_URL,   True),
-    ("/api/v1/vocabulary", settings.CONTENT_SERVICE_URL,   True),
-    ("/api/v1/asl",        settings.CONTENT_SERVICE_URL,   True),
-    ("/api/v1/api",        settings.CONTENT_SERVICE_URL,   True),
-    ("/api/v1/stem",       settings.CONTENT_SERVICE_URL,   True),
-    ("/asl",               settings.CONTENT_SERVICE_URL,   True),
+    ("/api/v1/videos",     settings.CONTENT_SERVICE_URL,   True,  False),
+    ("/api/v1/learning",   settings.CONTENT_SERVICE_URL,   True,  False),
+    ("/api/v1/alphabet",   settings.CONTENT_SERVICE_URL,   True,  False),
+    ("/api/v1/glyphs",     settings.CONTENT_SERVICE_URL,   True,  False),
+    ("/api/v1/vocabulary", settings.CONTENT_SERVICE_URL,   True,  False),
+    ("/api/v1/asl",        settings.CONTENT_SERVICE_URL,   True,  False),
+    ("/api/v1/api",        settings.CONTENT_SERVICE_URL,   True,  False),
+    ("/api/v1/stem",       settings.CONTENT_SERVICE_URL,   True,  False),
+    ("/asl",               settings.CONTENT_SERVICE_URL,   True,  False),
 
     # Practice service
-    ("/api/v1/practice",   settings.PRACTICE_SERVICE_URL,  True),
-    ("/api/v1/progress",   settings.PRACTICE_SERVICE_URL,  True),
+    ("/api/v1/practice",   settings.PRACTICE_SERVICE_URL,  True,  False),
+    ("/api/v1/progress",   settings.PRACTICE_SERVICE_URL,  True,  False),
 
     # Convert service
-    ("/api/v1/convert",    settings.CONVERT_SERVICE_URL,   False),
+    ("/api/v1/convert",    settings.CONVERT_SERVICE_URL,   False, False),
 
     # ML Model Proxing
-    ("/api/v1/model/asl",  settings.ASL_SERVICE_URL,       False),
-    ("/api/v1/model/isl",  settings.ISL_SERVICE_URL,       False),
+    ("/api/v1/model/asl",  settings.ASL_SERVICE_URL,       False, True),
+    ("/api/v1/model/isl",  settings.ISL_SERVICE_URL,       False, True),
 ]

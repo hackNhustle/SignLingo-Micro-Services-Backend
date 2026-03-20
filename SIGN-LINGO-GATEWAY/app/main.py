@@ -23,10 +23,10 @@ client = httpx.AsyncClient(timeout=30.0)
 # ── Helpers ──────────────────────────────────────────────────────────
 def resolve_upstream(path: str):
     """Match the request path to an upstream service using the route table."""
-    for prefix, upstream_url, requires_jwt in ROUTE_TABLE:
+    for prefix, upstream_url, requires_jwt, strip_prefix in ROUTE_TABLE:
         if path.startswith(prefix):
-            return upstream_url, requires_jwt
-    return None, False
+            return upstream_url, requires_jwt, strip_prefix, prefix
+    return None, False, False, None
 
 
 def validate_jwt(request: Request):
@@ -55,7 +55,7 @@ async def proxy(request: Request, path: str):
     full_path = f"/{path}"
 
     # Resolve upstream
-    upstream_url, requires_jwt = resolve_upstream(full_path)
+    upstream_url, requires_jwt, strip_prefix, matched_prefix = resolve_upstream(full_path)
     if not upstream_url:
         raise HTTPException(status_code=404, detail=f"No route matched: {full_path}")
 
@@ -64,7 +64,14 @@ async def proxy(request: Request, path: str):
         validate_jwt(request)
 
     # Build upstream URL
-    target_url = f"{upstream_url}{full_path}"
+    # If strip_prefix is True, remove the matched prefix from the path
+    target_path = full_path
+    if strip_prefix:
+        target_path = full_path[len(matched_prefix):]
+        if not target_path or not target_path.startswith("/"):
+            target_path = "/" + target_path
+
+    target_url = f"{upstream_url.rstrip('/')}{target_path}"
     if request.url.query:
         target_url += f"?{request.url.query}"
 
