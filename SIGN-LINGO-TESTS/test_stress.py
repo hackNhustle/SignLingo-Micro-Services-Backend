@@ -5,7 +5,8 @@ import pytest
 import os
 
 # Base URL from environment or fallback
-GATEWAY_URL = os.getenv("GATEWAY_URL", "http://gateway:8000")
+# Base URL from environment or fallback (localhost for host-based testing, gateway for container-internal)
+GATEWAY_URL = os.getenv("GATEWAY_URL", "http://localhost:8000")
 
 # Configuration for stress test
 CONCURRENT_REQUESTS = 20  # Number of simultaneous connections
