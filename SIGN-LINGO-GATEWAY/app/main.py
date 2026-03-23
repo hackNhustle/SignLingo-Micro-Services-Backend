@@ -93,13 +93,17 @@ async def proxy(request: Request, path: str):
         )
     except httpx.ConnectError as e:
         print(f"DEBUG: ConnectError to {target_url}: {e}")
-        raise HTTPException(status_code=502, detail=f"Upstream service unreachable: {e}")
+        raise HTTPException(status_code=502, detail=f"Upstream service unreachable (ConnectError): {e}")
     except httpx.TimeoutException as e:
-        print(f"DEBUG: TimeoutException to {target_url}: {e}")
+        # Catch all timeouts (including PoolTimeout, ReadTimeout, etc.)
+        print(f"DEBUG: TimeoutException ({type(e).__name__}) to {target_url}: {e}")
         raise HTTPException(status_code=504, detail=f"Upstream service timed out: {e}")
+    except httpx.RequestError as e:
+        print(f"DEBUG: RequestError ({type(e).__name__}) to {target_url}: {e}")
+        raise HTTPException(status_code=502, detail=f"Upstream request failed ({type(e).__name__}): {e}")
     except Exception as e:
-        print(f"DEBUG: Internal Error proxying to {target_url}: {e}")
-        raise HTTPException(status_code=500, detail=f"Internal Gateway Error: {e}")
+        print(f"DEBUG: Unknown Error proxying to {target_url}: {type(e).__name__} - {e}")
+        raise HTTPException(status_code=500, detail=f"Internal Gateway Error: {type(e).__name__}")
 
     # Forward response back
     excluded_headers = {"content-encoding", "content-length", "transfer-encoding", "connection"}
