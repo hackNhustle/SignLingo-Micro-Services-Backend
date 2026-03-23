@@ -7,12 +7,12 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
 
     # Upstream service URLs (override via env vars for Render deployment)
-    AUTH_SERVICE_URL: str = os.getenv("AUTH_SERVICE_URL", "http://auth-service:5002")
-    CONTENT_SERVICE_URL: str = os.getenv("CONTENT_SERVICE_URL", "http://content-service:5003")
-    PRACTICE_SERVICE_URL: str = os.getenv("PRACTICE_SERVICE_URL", "http://practice-service:5004")
-    CONVERT_SERVICE_URL: str = os.getenv("CONVERT_SERVICE_URL", "http://convert-service:5005")
-    ASL_SERVICE_URL: str = os.getenv("ASL_SERVICE_URL", "https://asl-alphabet-detection.onrender.com")
-    ISL_SERVICE_URL: str = os.getenv("ISL_SERVICE_URL", "https://isl-alphabet-detection.onrender.com")
+    AUTH_SERVICE_URL: str = os.getenv("AUTH_SERVICE_URL", "https://signlingo-auth.onrender.com")
+    CONTENT_SERVICE_URL: str = os.getenv("CONTENT_SERVICE_URL", "https://signlingo-content.onrender.com")
+    PRACTICE_SERVICE_URL: str = os.getenv("PRACTICE_SERVICE_URL", "https://signlingo-practice.onrender.com")
+    CONVERT_SERVICE_URL: str = os.getenv("CONVERT_SERVICE_URL", "https://signlingo-convert.onrender.com")
+    ASL_SERVICE_URL: str = os.getenv("ASL_SERVICE_URL", "https://asl-alphabet-detection-pxh1.onrender.com")
+    ISL_SERVICE_URL: str = os.getenv("ISL_SERVICE_URL", "https://isl-alphabet-detection-cwfg.onrender.com")
 
     class Config:
         env_file = ".env"
