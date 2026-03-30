@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1.endpoints import convert
+from app.core.profiling import ProfilingMiddleware
 
 app = FastAPI(title="SignLingo Convert Service")
 
@@ -11,6 +12,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Add Profiling Middleware
+app.add_middleware(ProfilingMiddleware)
 
 app.include_router(convert.router, prefix="/api/v1/convert", tags=["convert"])
 

@@ -4,6 +4,7 @@ import httpx
 from fastapi import FastAPI, Request, Response, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings, ROUTE_TABLE
+from app.core.profiling import ProfilingMiddleware
 
 app = FastAPI(title="SignLingo API Gateway")
 
@@ -15,6 +16,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Add Profiling Middleware
+app.add_middleware(ProfilingMiddleware)
 
 # ── Shared async HTTP client ─────────────────────────────────────────
 client = httpx.AsyncClient(timeout=30.0)
@@ -41,6 +45,11 @@ def validate_jwt(request: Request):
         raise HTTPException(status_code=401, detail="Token has expired")
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid token")
+
+
+@app.get("/")
+async def root():
+    return {"message": "SignLingo API Gateway is running!"}
 
 
 # ── Health check ─────────────────────────────────────────────────────

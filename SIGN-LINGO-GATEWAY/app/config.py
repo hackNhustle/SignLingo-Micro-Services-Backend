@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         case_sensitive = True
+        extra = "ignore"
 
 settings = Settings()
 
@@ -39,6 +40,9 @@ ROUTE_TABLE = [
     ("/api/v1/api",        settings.CONTENT_SERVICE_URL,   True,  False),
     ("/api/v1/stem",       settings.CONTENT_SERVICE_URL,   True,  False),
     ("/asl",               settings.CONTENT_SERVICE_URL,   True,  False),
+
+    ("/api/v1/content/health",  settings.CONTENT_SERVICE_URL,   False, True),
+    ("/api/v1/practice/health", settings.PRACTICE_SERVICE_URL,  False, True),
 
     # Practice service
     ("/api/v1/practice",   settings.PRACTICE_SERVICE_URL,  True,  False),

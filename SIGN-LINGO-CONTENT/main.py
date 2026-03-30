@@ -11,6 +11,7 @@ from core.config import settings
 from api.v1.api import api_router
 from db.database import mongo
 from motor.motor_asyncio import AsyncIOMotorClient
+from core.profiling import ProfilingMiddleware
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -51,6 +52,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Add Profiling Middleware
+app.add_middleware(ProfilingMiddleware)
 
 # Configure Cloudinary
 cloudinary.config(
